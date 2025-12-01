@@ -1,8 +1,4 @@
-/*
- * Use this CSS to learn some intersting techniques,
- * in case you're wondering how I built the UI.
- * Have fun! 😁
- */
+
 
 * {
   margin: 0;
@@ -217,11 +213,11 @@ nav {
 }
 
 .movements__type--deposit {
-  background-image: linear-gradient(to top left, #39b385, #9be15d);
+  background-image: linear-gradient(to top left, #43a047, #66bb6a);
 }
 
 .movements__type--withdrawal {
-  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+  background-image: linear-gradient(to top left, #ffa726, #ffb74d);
 }
 
 .movements__value {
@@ -256,7 +252,7 @@ nav {
 }
 
 .summary__value--out {
-  color: #f5465d;
+  color: #ffb74d;
 }
 
 .btn--sort {
@@ -276,15 +272,15 @@ nav {
 }
 
 .operation--transfer {
-  background-image: linear-gradient(to top left, #ffb003, #ffcb03);
+  background: linear-gradient(to right, rgb(19, 78, 94), rgb(113, 178, 128));
 }
 
 .operation--loan {
-  background-image: linear-gradient(to top left, #39b385, #9be15d);
+  background: linear-gradient(to right, rgb(0, 180, 219), rgb(0, 131, 176));
 }
 
 .operation--close {
-  background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+  background: linear-gradient(to right, rgb(237, 33, 58), rgb(147, 41, 30));
 }
 
 h2 {
