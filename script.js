@@ -1,13 +1,15 @@
 'use strict';
 
-/* OLABANK */
+/* =========================
+   OLABANK – AUTO LOGOUT
+   ========================= */
 
-/////////////////////////////////////////////////////////////////////
-// Customer Data
+/////////////////////////////////////////////////
+// DATA
 const account1 = {
   owner: 'Moubarak Akamou',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
-  interestRate: 1.2, // %
+  interestRate: 1.2,
   pin: 1234,
 };
 
@@ -32,61 +34,47 @@ const account4 = {
   pin: 4444,
 };
 const account5 = {
-  owner: 'Michael Thompson',
-  movements: [200, -100, 340, -300, 50, 400],
-  interestRate: 1.2,
+  owner: 'Daniel Johnson',
+  movements: [1200, -300, 450, -150, 900, -50],
+  interestRate: 1.3,
   pin: 5555,
 };
-
 const account6 = {
-  owner: 'Emily Carter',
-  movements: [500, 1200, -300, 50, -100, 200],
-  interestRate: 1.3,
+  owner: 'Aisha Mohamed',
+  movements: [300, 600, -100, -250, 1200, 400],
+  interestRate: 1.1,
   pin: 6666,
 };
 
 const account7 = {
-  owner: 'Daniel Rodriguez',
-  movements: [150, -50, 600, -200, 1000],
-  interestRate: 1.1,
+  owner: 'Carlos Mendoza',
+  movements: [2500, -500, -200, 850, -300, 120],
+  interestRate: 1.4,
   pin: 7777,
 };
 
 const account8 = {
-  owner: 'Olivia Brown',
-  movements: [900, 200, -150, 350, -50],
-  interestRate: 1.4,
+  owner: 'Emily Carter',
+  movements: [800, -100, 200, -50, 400, 950],
+  interestRate: 0.9,
   pin: 8888,
 };
 
 const account9 = {
-  owner: 'William Harris',
-  movements: [-200, 450, 1200, -100, 300],
-  interestRate: 1.2,
+  owner: 'Hassan Ali',
+  movements: [1500, -700, 300, -100, 50, 900],
+  interestRate: 1.6,
   pin: 9999,
 };
 
 const account10 = {
-  owner: 'Sophia Wilson',
-  movements: [300, 500, -200, 1000, -100, 50],
-  interestRate: 1.5,
+  owner: 'Olivia Brown',
+  movements: [400, 1200, -350, -100, 600, 200],
+  interestRate: 1.0,
   pin: 1010,
 };
 
-const account11 = {
-  owner: 'David Anderson',
-  movements: [400, -100, 700, 200, -50],
-  interestRate: 1,
-  pin: 1111,
-};
-
-const account12 = {
-  owner: 'Ava Martinez',
-  movements: [250, 800, -300, -50, 600],
-  interestRate: 1.3,
-  pin: 1212,
-};
-
+/* ✅ UPDATED ACCOUNTS ARRAY */
 const accounts = [
   account1,
   account2,
@@ -98,19 +86,17 @@ const accounts = [
   account8,
   account9,
   account10,
-  account11,
-  account12,
 ];
-/////////////////////////////////////////////////////////////////////
 
-// Elements select
+/////////////////////////////////////////////////
+// ELEMENTS
 const labelWelcome = document.querySelector('.welcome');
-const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
 const labelSumIn = document.querySelector('.summary__value--in');
 const labelSumOut = document.querySelector('.summary__value--out');
 const labelSumInterest = document.querySelector('.summary__value--interest');
 const labelTimer = document.querySelector('.timer');
+const labelDate = document.querySelector('.date');
 
 const containerApp = document.querySelector('.app');
 const containerMovements = document.querySelector('.movements');
@@ -129,151 +115,213 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-//
-const displayMovements = function (movements, sort = false) {
+/////////////////////////////////////////////////
+// INITIAL STATE
+containerApp.style.opacity = 0;
+containerApp.style.pointerEvents = 'none';
+
+/////////////////////////////////////////////////
+// FUNCTIONS
+const displayCurrentDate = () => {
+  const now = new Date();
+
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // months are 0-based
+  const year = now.getFullYear();
+
+  labelDate.textContent = `${day}/${month}/${year}`;
+};
+
+const displayMovements = (movements, sort = false) => {
   containerMovements.innerHTML = '';
-  //.textContent = 0 Another way to write to the html page
 
   const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
 
-  movs.forEach((mov, index) => {
+  movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
-    <div class="movements__row">
-      <div class="movements__type movements__type--${type}">${
-      index + 1
-    } ${type}</div>
-    
-      <div class="movements__value">${mov}€</div>
-    </div>`;
-
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">
+          ${i + 1} ${type}
+        </div>
+        <div class="movements__value">${mov}€</div>
+      </div>`;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
 
-const calcDisplayBalance = acct => {
-  acct.balance = acct.movements.reduce((acc, amount) => acc + amount, 0);
-  // acct.balance = balance;
-  labelBalance.innerHTML = `${acct.balance}€`; //add balance to the page
+const calcDisplayBalance = acc => {
+  acc.balance = acc.movements.reduce((sum, mov) => sum + mov, 0);
+  labelBalance.textContent = `${acc.balance}€`;
 };
 
-const calcDisplaySummary = account => {
-  const income = account.movements
-    .filter(deposit => deposit > 0)
-    .reduce((acc, currV) => acc + currV, 0);
-  const outcome = account.movements
-    .filter(withdraw => withdraw < 0)
-    .reduce((acc, currV) => acc + currV, 0);
+const calcDisplaySummary = acc => {
+  const income = acc.movements.filter(m => m > 0).reduce((a, b) => a + b, 0);
+  const out = acc.movements.filter(m => m < 0).reduce((a, b) => a + b, 0);
+  const interest = acc.movements
+    .filter(m => m > 0)
+    .map(d => (d * acc.interestRate) / 100)
+    .reduce((a, b) => a + b, 0);
 
-  const interest = account.movements
-    .filter(mov => mov > 0)
-    .map(deposit => (deposit * account.interestRate) / 100)
-    .reduce((acc, int) => acc + int, 0);
-
-  labelSumIn.innerHTML = `${income}€`;
-  labelSumOut.innerHTML = `${Math.abs(outcome)}€`;
+  labelSumIn.textContent = `${income}€`;
+  labelSumOut.textContent = `${Math.abs(out)}€`;
   labelSumInterest.textContent = `${interest}€`;
 };
 
-const createUserNames = function (accs) {
+const updateUI = acc => {
+  displayMovements(acc.movements);
+  calcDisplayBalance(acc);
+  calcDisplaySummary(acc);
+};
+
+const createUsernames = accs => {
   accs.forEach(acc => {
     acc.username = acc.owner
+      .toLowerCase()
       .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toLowerCase();
+      .map(n => n[0])
+      .join('');
   });
 };
-createUserNames(accounts);
+createUsernames(accounts);
 
-const updateUI = acct => {
-  //Display movement
-  displayMovements(acct.movements);
-  // Display balance
-  calcDisplayBalance(acct);
-  //Display summary
-  calcDisplaySummary(acct);
+/////////////////////////////////////////////////
+// AUTO LOGOUT TIMER
+
+let logoutTimer;
+
+const startLogoutTimer = () => {
+  let time = 300; // 5 minutes (300s)
+
+  const tick = () => {
+    const min = String(Math.trunc(time / 60)).padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(logoutTimer);
+
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+      containerApp.style.pointerEvents = 'none';
+    }
+
+    time--;
+  };
+
+  tick();
+  const timer = setInterval(tick, 1000);
+  return timer;
 };
 
-//Login parameter
-let userAcct = 0;
+/////////////////////////////////////////////////
+// EVENTS
+
+let currentAccount;
+let sorted = false;
+
+// LOGIN
 btnLogin.addEventListener('click', e => {
-  e.preventDefault(); //the page will not reload
-  userAcct = accounts.find(acct => acct.username === inputLoginUsername.value);
+  e.preventDefault();
 
-  if (userAcct?.pin === Number(inputLoginPin.value)) {
-    //Display UI and wlcome message
-    labelWelcome.innerHTML = `Welcome back, ${userAcct.owner.split(' ')[0]}`;
-    containerApp.style.opacity = 100; //set a style
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
 
-    //clear input fields
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    labelWelcome.textContent = `Welcome, ${currentAccount.owner.split(' ')[0]}`;
+
+    containerApp.style.opacity = 1;
+    containerApp.style.pointerEvents = 'auto';
+
+    // ✅ SHOW CURRENT DATE
+    displayCurrentDate();
+
     inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
 
-    updateUI(userAcct);
+    if (logoutTimer) clearInterval(logoutTimer);
+    logoutTimer = startLogoutTimer();
+
+    updateUI(currentAccount);
   }
 });
 
-// transfer setting
+// TRANSFER
 btnTransfer.addEventListener('click', e => {
   e.preventDefault();
+
   const amount = Number(inputTransferAmount.value);
   const receiverAcc = accounts.find(
     acc => acc.username === inputTransferTo.value
   );
 
-  inputTransferAmount.value = inputTransferTo.value = '';
-
   if (
     amount > 0 &&
     receiverAcc &&
-    userAcct.balance >= amount &&
-    receiverAcc?.username !== userAcct.username
+    currentAccount.balance >= amount &&
+    receiverAcc.username !== currentAccount.username
   ) {
-    userAcct.movements.push(-amount);
+    currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
-    updateUI(userAcct);
+
+    clearInterval(logoutTimer);
+    logoutTimer = startLogoutTimer();
+
+    updateUI(currentAccount);
   }
+
+  inputTransferAmount.value = inputTransferTo.value = '';
 });
 
-//setting for the loan
+// LOAN
 btnLoan.addEventListener('click', e => {
   e.preventDefault();
+
   const amount = Number(inputLoanAmount.value);
 
-  if (amount > 0 && userAcct.movements.some(mov => mov >= amount * 0.1)) {
-    //Add movement
-    userAcct.movements.push(amount);
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    currentAccount.movements.push(amount);
 
-    updateUI(userAcct);
+    clearInterval(logoutTimer);
+    logoutTimer = startLogoutTimer();
+
+    updateUI(currentAccount);
   }
+
   inputLoanAmount.value = '';
 });
 
-//close account setting
+// CLOSE ACCOUNT
 btnClose.addEventListener('click', e => {
   e.preventDefault();
 
   if (
-    inputCloseUsername.value === userAcct.username &&
-    userAcct.pin === Number(inputClosePin.value)
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
   ) {
     const index = accounts.findIndex(
-      acct => acct.username === userAcct.username
+      acc => acc.username === currentAccount.username
     );
-    console.log(index);
 
-    //delete account
     accounts.splice(index, 1);
-    //Hide UI
+    clearInterval(logoutTimer);
+
     containerApp.style.opacity = 0;
+    containerApp.style.pointerEvents = 'none';
+    labelWelcome.textContent = 'Log in to get started';
   }
-  inputTransferAmount.value = inputTransferTo.value = '';
-  // labelWelcome.value = '';
+
+  inputCloseUsername.value = inputClosePin.value = '';
 });
 
-let sorted = false;
+// SORT
 btnSort.addEventListener('click', e => {
   e.preventDefault();
-  displayMovements(userAcct.movements, !sorted);
+  displayMovements(currentAccount.movements, !sorted);
   sorted = !sorted;
+
+  clearInterval(logoutTimer);
+  logoutTimer = startLogoutTimer();
 });
