@@ -139,12 +139,13 @@ const displayMovements = (movements, sort = false) => {
 
   movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
+    const formatted = mov < 0 ? `-$${Math.abs(mov)}` : `$${mov}`;
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">
           ${i + 1} ${type}
         </div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${formatted}</div>
       </div>`;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
@@ -152,7 +153,7 @@ const displayMovements = (movements, sort = false) => {
 
 const calcDisplayBalance = acc => {
   acc.balance = acc.movements.reduce((sum, mov) => sum + mov, 0);
-  labelBalance.textContent = `${acc.balance}€`;
+  labelBalance.textContent = `$${acc.balance}`;
 };
 
 const calcDisplaySummary = acc => {
@@ -163,9 +164,9 @@ const calcDisplaySummary = acc => {
     .map(d => (d * acc.interestRate) / 100)
     .reduce((a, b) => a + b, 0);
 
-  labelSumIn.textContent = `${income}€`;
-  labelSumOut.textContent = `${Math.abs(out)}€`;
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumIn.textContent = `$${income}`;
+  labelSumOut.textContent = `$${Math.abs(out)}`;
+  labelSumInterest.textContent = `$${interest}`;
 };
 
 const updateUI = acc => {
