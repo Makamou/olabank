@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1b2b" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="OlaBank — a premium online-banking dashboard. Secure login, balances, transfers, loans, and account management."
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" type="image/png" href="/icon.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..700;1,400..600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>OlaBank — Private Banking</title>
+  </head>
+  <body>
+    <!-- TOP NAVIGATION -->
+    <nav aria-label="Account access">
+      <p class="welcome" aria-live="polite">Log in to get started</p>
+      <img src="olabank.png" alt="OlaBank" class="logo" />
+      <form class="login" role="search" aria-label="Login">
+        <label class="visually-hidden" for="login-user">Username</label>
+        <input
+          id="login-user"
+          type="text"
+          placeholder="user"
+          autocomplete="username"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
+          class="login__input login__input--user"
+        />
+        <label class="visually-hidden" for="login-pin">PIN</label>
+        <input
+          id="login-pin"
+          type="password"
+          placeholder="pin"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="current-password"
+          class="login__input login__input--pin"
+        />
+        <button class="login__btn" type="submit" aria-label="Log in">
+          &rarr;
+        </button>
+      </form>
+
+      <button
+        class="logout__btn"
+        type="button"
+        hidden
+        aria-label="Log out of your account"
+      >
+        <svg
+          class="logout__icon"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M15 17l5-5-5-5" />
+          <path d="M20 12H9" />
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        </svg>
+        <span>Log out</span>
+      </button>
+    </nav>
+
+    <main class="app" aria-label="Account dashboard">
+      <!-- BALANCE -->
+      <section class="balance" aria-labelledby="balance-label">
+        <div>
+          <p id="balance-label" class="balance__label">Current balance</p>
+          <p class="balance__date">
+            As of <span class="date">—</span>
+          </p>
+        </div>
+        <p class="balance__value" aria-live="polite">$0</p>
+      </section>
+
+      <!-- MOVEMENTS -->
+      <section
+        class="movements"
+        aria-label="Recent movements"
+        tabindex="0"
+      >
+        <div class="movements__row">
+          <div class="movements__type movements__type--deposit">Deposit</div>
+          <div class="movements__date">—</div>
+          <div class="movements__value">$0</div>
+        </div>
+      </section>
+
+      <!-- SUMMARY -->
+      <section class="summary" aria-label="Account summary">
+        <p class="summary__label">In</p>
+        <p class="summary__label">Out</p>
+        <p class="summary__label">Interest</p>
+        <p class="summary__value summary__value--in" aria-live="polite">$0</p>
+        <p class="summary__value summary__value--out" aria-live="polite">$0</p>
+        <p class="summary__value summary__value--interest" aria-live="polite">
+          $0
+        </p>
+        <button class="btn--sort" type="button" aria-label="Sort movements">
+          Sort
+        </button>
+      </section>
+
+      <!-- OPERATION: TRANSFERS -->
+      <section class="operation operation--transfer" aria-labelledby="op-transfer">
+        <h2 id="op-transfer">Transfer money</h2>
+        <form class="form form--transfer">
+          <label class="visually-hidden" for="transfer-to">Transfer to</label>
+          <input
+            id="transfer-to"
+            type="text"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            class="form__input form__input--to"
+          />
+          <label class="visually-hidden" for="transfer-amount">Amount</label>
+          <input
+            id="transfer-amount"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            class="form__input form__input--amount"
+          />
+          <button
+            class="form__btn form__btn--transfer"
+            type="submit"
+            aria-label="Transfer"
+          >
+            &rarr;
+          </button>
+          <label class="form__label" for="transfer-to">Transfer to</label>
+          <label class="form__label" for="transfer-amount">Amount</label>
+        </form>
+      </section>
+
+      <!-- OPERATION: LOAN -->
+      <section class="operation operation--loan" aria-labelledby="op-loan">
+        <h2 id="op-loan">Request loan</h2>
+        <form class="formC form--loan">
+          <label class="visually-hidden" for="loan-amount">Amount</label>
+          <input
+            id="loan-amount"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            class="form__input form__input--loan-amount"
+          />
+          <button
+            class="form__btn form__btn--loan"
+            type="submit"
+            aria-label="Request loan"
+          >
+            &rarr;
+          </button>
+          <label class="form__label form__label--loan" for="loan-amount">
+            Amount
+          </label>
+        </form>
+      </section>
+
+      <!-- OPERATION: CLOSE -->
+      <section class="operation operation--close" aria-labelledby="op-close">
+        <h2 id="op-close">Close account</h2>
+        <form class="form form--close">
+          <label class="visually-hidden" for="close-user">Confirm user</label>
+          <input
+            id="close-user"
+            type="text"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            class="form__input form__input--user"
+          />
+          <label class="visually-hidden" for="close-pin">Confirm PIN</label>
+          <input
+            id="close-pin"
+            type="password"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="current-password"
+            class="form__input form__input--pin"
+          />
+          <button
+            class="form__btn form__btn--close"
+            type="submit"
+            aria-label="Close account"
+          >
+            &rarr;
+          </button>
+          <label class="form__label" for="close-user">Confirm user</label>
+          <label class="form__label" for="close-pin">Confirm PIN</label>
+        </form>
+      </section>
+
+      <!-- LOGOUT TIMER -->
+      <p class="logout-timer" aria-live="polite">
+        Auto logout in <span class="timer">05:00</span>
+      </p>
+    </main>
+
+    <footer class="olabank-footer">
+      <p>OlaBank — Secure. Considered. Yours.</p>
+    </footer>
+
+    <!-- Visually hidden helper, used by accessible <label>s -->
+    <style>
+      .visually-hidden {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
+
+    <script src="script.js"></script>
+  </body>
+</html>
